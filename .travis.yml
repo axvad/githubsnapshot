@@ -1,1 +1,9 @@
+sudo: required
+
+services:
+  - docker
+
 language: java
+
+after_success:
+  -sh ./deploy_dockerhub.sh
