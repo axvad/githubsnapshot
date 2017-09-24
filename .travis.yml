@@ -5,5 +5,20 @@ services:
 
 language: java
 
+before_script:
+  -echo "Starting build"
+
+script:
+  -mvn clean package
+
+after_script:
+  -echo "Script finished"
+
+
 after_success:
+  -echo "Build was successful. $TRAVIS_TEST_RESULT"
   -sh ./deploy_dockerhub.sh
+  -sh ./deploy_heroku.sh
+
+after_failure:
+  -echo "Build was failed"
