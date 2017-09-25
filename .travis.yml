@@ -9,14 +9,17 @@ before_script:
   - echo "Starting build"
 
 script:
-  - mvn clean package
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+notification:
+  email: false
 
 after_script:
   - echo "Script finished"
+  - echo "Test result. $TRAVIS_TEST_RESULT"
 
 
 after_success:
-  - echo "Build was successful. $TRAVIS_TEST_RESULT"
   - sh ./deploy_dockerhub.sh
   - sh ./deploy_heroku.sh
 
