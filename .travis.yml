@@ -11,8 +11,6 @@ before_script:
 script:
   - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
-notification:
-  email: false
 
 after_script:
   - echo "Script finished"
@@ -20,15 +18,15 @@ after_script:
 
 
 after_success:
-  - #!/bin/sh
-    docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-    if [ "$TRAVIS_BRANCH" = "master" ]; then
+  - docker --version
+  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then
         TAG="latest"
     else
         TAG="$TRAVIS_BRANCH"
     fi
-    docker build -f Dockerfile -t $TRAVIS_REPO_SLUG:$TAG .
-    docker push $TRAVIS_REPO_SLUG
+  -  docker build -f Dockerfile -t $TRAVIS_REPO_SLUG:$TAG .
+  -  docker push $TRAVIS_REPO_SLUG
   - sh ./deploy_heroku.sh
 
 after_failure:
