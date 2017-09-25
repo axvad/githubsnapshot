@@ -5,29 +5,9 @@ services:
 
 language: java
 
-before_script:
-  - echo "Starting build"
-
 script:
-  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-
-
-after_script:
-  - echo "Script finished"
-  - echo "Test result. $TRAVIS_TEST_RESULT"
-
+  - ./mvnw package
 
 after_success:
-  - docker --version
-  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-  - if [ "$TRAVIS_BRANCH" = "master" ]; then
-        TAG="latest"
-    else
-        TAG="$TRAVIS_BRANCH"
-    fi
-  -  docker build -f Dockerfile -t $TRAVIS_REPO_SLUG:$TAG .
-  -  docker push $TRAVIS_REPO_SLUG
-  - sh ./deploy_heroku.sh
-
-after_failure:
-  - echo "Build was failed"
+  - sh .travis/deploy_dockerhub.sh
+  - test "$TRAVIS_BRANCH" = "master" && sh .travis/deploy_heroku.sh
