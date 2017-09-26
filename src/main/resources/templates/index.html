@@ -1,24 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<script type="text/javascript">
-    fetch("/api/visits")
-        .then(response => response.json())
-        .then(visits => {
-            visits.forEach(visit => {
-                const el = document.createElement('li');
-                el.innerText = visit.description;
-                document.querySelector('#visits').append(el);
-            });
-        });
-</script>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>GitHUB портфолио</title>
-    <h2>CI/CD complete. ver 2.00</h2>
-    <h3> Congratulate, {{name}}</h3>
+    <title>GitHUB user profile snapshot</title>
+    <script type="text/javascript">
+        fetch("/api/visits")
+            .then(response => response.json())
+            .then(visits => {
+                visits.forEach(visit => {
+                    const el = document.createElement('li');
+                    el.innerText = visit.description;
+                    document.querySelector('#visits').append(el);
+                });
+            });
+    </script>
+    <script type="text/javascript">
+        fetch("/api/user")
+            .then(response => response.json())
+            .then(user => {
+                    document.querySelector('#user').innerText='Профиль пользователя ' + user.name;
+                    user.getRepo().forEach(rep => {
+                        const el = document.createElement('li');
+                        el.innerText = rep.description+" "+rep.star+" stars";
+                        document.querySelector('#repos').append(el)
+                    });
+                });
+    </script>
 </head>
 <body>
-<h1>Blank github snapsot.</h1>
+<form action="#" th:action="@{/}" th:object="${user_find_form}" method="post">
+    GitHUB username:
+    <input type="text" th:field="*{username}"/><input type="submit" value="Find"/>
+</form>
+<h2 id="user">Профиль пользователя</h2>
+<p>Repositories
+<ul id="repos">
+</ul>
+</p>
+<p>visits list:
 <ul id="visits">
 </ul>
+</p>
+<p> CI/CD complete. ver 2.00</p>
 </body>
 </html>

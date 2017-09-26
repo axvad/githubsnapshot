@@ -1,5 +1,6 @@
 package com.samtools.githubsnapshot;
 
+import com.samtools.githubsnapshot.modeldata.GitHUBData;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

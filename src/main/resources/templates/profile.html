@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>GitHUB user profile snapshot</title>
+    <script type="text/javascript">
+        fetch("/api/visits")
+            .then(response => response.json())
+            .then(visits => {
+                visits.forEach(visit => {
+                    const el = document.createElement('li');
+                    el.innerText = visit.description;
+                    document.querySelector('#visits').append(el);
+                });
+            });
+    </script>
+</head>
+<body>
+<p> you choose: {{name}}! CI/CD complete. ver 2.00</p>
+<a href="/finduser">Find  new user</a>
+<p>visits list:
+<ul id="visits">
+</ul>
+</p>
+</body>
+</html>
