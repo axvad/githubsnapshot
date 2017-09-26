@@ -1,5 +1,6 @@
 package com.samtools.githubsnapshot;
 
+import com.samtools.githubsnapshot.dbview.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,9 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApiController {
     final VisitsRepository visitsRepository;
+    final GHUsersListCR usersListCR;
+    final GHReposListCR reposListCR;
 
-    public ApiController(VisitsRepository visitsRepository) {
+    public ApiController(VisitsRepository visitsRepository, GHUsersListCR usersListCR, GHReposListCR reposListCR) {
         this.visitsRepository = visitsRepository;
+        this.usersListCR = usersListCR;
+        this.reposListCR = reposListCR;
     }
 
     @GetMapping("/visits")
@@ -19,8 +24,12 @@ public class ApiController {
     }
 
     @GetMapping("/user")
-    public GitHUBUser getUser(){
-        //TODO заменить заглушку
-        return new GitHUBUser(33, "GitBORIS");
+    public GHUser getLastUser(){
+        return usersListCR.findOne(usersListCR.count()); //if (usersListCR.count()==0)
+    }
+
+    @GetMapping("/repos")
+    public Iterable<GHRepo> getRepos(long userId){
+        return reposListCR.findAll();
     }
 }

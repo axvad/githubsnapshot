@@ -1,4 +1,4 @@
-package com.samtools.githubsnapshot;
+package com.samtools.githubsnapshot.modeldata;
 
 
 import com.fasterxml.jackson.databind.util.JSONPObject;

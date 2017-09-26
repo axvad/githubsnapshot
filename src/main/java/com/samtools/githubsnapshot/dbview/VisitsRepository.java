@@ -1,5 +1,6 @@
-package com.samtools.githubsnapshot;
+package com.samtools.githubsnapshot.dbview;
 
+import com.samtools.githubsnapshot.dbview.Visit;
 import org.springframework.data.repository.CrudRepository;
 
 

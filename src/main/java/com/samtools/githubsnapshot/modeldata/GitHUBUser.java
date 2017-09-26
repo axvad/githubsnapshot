@@ -1,4 +1,8 @@
-package com.samtools.githubsnapshot;
+package com.samtools.githubsnapshot.modeldata;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class GitHUBUser {
 
@@ -6,14 +10,18 @@ public class GitHUBUser {
 
     private String name;
 
+    private List<GitRepository> repositories;
+
+
     public GitHUBUser(String name) {
         this.name = name;
         this.id = -1;
     }
 
-    public GitHUBUser(int id, String name) {
+    public GitHUBUser(int id, String name,List<GitRepository> repos) {
         this.id = id;
         this.name = name;
+        this.repositories = new ArrayList<>(repos);
     }
 
     @Override
@@ -57,5 +65,28 @@ public class GitHUBUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<GitRepository> getRepositories() {
+        return repositories;
+    }
+
+    public void setRepositories(List<GitRepository> repositories) {
+        this.repositories = repositories;
+    }
+
+    //todo delete from release
+    private static int idcounter =0;
+
+    //it's stub for testing.
+    static GitHUBUser createTestUser(String name){
+        idcounter++;
+
+        ArrayList<GitRepository> rps = new ArrayList<>();
+
+        for (int i=0;i<6;i++ )
+            rps.add(new GitRepository(40+i,"Repos"+(i+1),(int)(Math.random()*10),(int)(Math.random()*100)));
+
+        return new GitHUBUser(idcounter, name, rps);
     }
 }

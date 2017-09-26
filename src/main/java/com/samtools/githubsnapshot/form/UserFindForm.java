@@ -3,6 +3,13 @@ package com.samtools.githubsnapshot.form;
 public class UserFindForm {
     private String username;
 
+    public UserFindForm() {
+    }
+
+    public UserFindForm(String username) {
+        this.username = username;
+    }
+
     public String getUsername() {
         return username;
     }
