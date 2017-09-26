@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" content="text/html" charset=UTF-8"/>
     <title>GitHUB user profile snapshot</title>
     <script type="text/javascript">
         fetch("/api/visits")
@@ -18,24 +17,29 @@
         fetch("/api/user")
             .then(response => response.json())
             .then(user => {
-                    const ul = document.createElement('usrr');
-                    ul.innerText = user.name;
-                    document.querySelector('#users').append(ul);
-            });
+                    document.querySelector('#user').innerText='Профиль пользователя ' + user.name;
+                    user.getRepo().forEach(rep => {
+                        const el = document.createElement('li');
+                        el.innerText = rep.description+" "+rep.star+" stars";
+                        document.querySelector('#repos').append(el)
+                    });
+                });
     </script>
 </head>
 <body>
-<h2>Статистика профиля пользователя GitHUB</h2>
-<form action="#" th:action="@{/finduser"} th:object="${user_find_form}" method="post">
+<form action="#" th:action="@{/}" th:object="${user_find_form}" method="post">
     GitHUB username:
-    <input type="text" th:field="*{user_name}"/><input type="submit" value="Find"/>
+    <input type="text" th:field="*{username}"/><input type="submit" value="Find"/>
 </form>
-<ul id="users">
+<h2 id="user">Профиль пользователя</h2>
+<p>Repositories
+<ul id="repos">
 </ul>
+</p>
 <p>visits list:
 <ul id="visits">
 </ul>
 </p>
-<p> Congratulate, {{name}}! CI/CD complete. ver 2.00</p>
+<p> CI/CD complete. ver 2.00</p>
 </body>
 </html>

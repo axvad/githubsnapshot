@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class ApiController {
-    final VisitsRepository visitsRepository;
+    final VisitsListCR visitsListCR;
     final GHUsersListCR usersListCR;
     final GHReposListCR reposListCR;
 
-    public ApiController(VisitsRepository visitsRepository, GHUsersListCR usersListCR, GHReposListCR reposListCR) {
-        this.visitsRepository = visitsRepository;
+    public ApiController(VisitsListCR visitsListCR, GHUsersListCR usersListCR, GHReposListCR reposListCR) {
+        this.visitsListCR = visitsListCR;
         this.usersListCR = usersListCR;
         this.reposListCR = reposListCR;
     }
 
     @GetMapping("/visits")
     public Iterable<Visit> getVisits(){
-        return visitsRepository.findAll();
+        return visitsListCR.findAll();
     }
 
     @GetMapping("/user")
