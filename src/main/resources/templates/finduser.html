@@ -28,7 +28,7 @@
 <h2>Статистика профиля пользователя GitHUB</h2>
 <form action="#" th:action="@{/finduser"} th:object="${user_find_form}" method="post">
     GitHUB username:
-    <input type="text" th:field="*{user_name}"/><input type="submit" value="Find"/>
+    <input type="text" th:field="*{username}"/><input type="submit" value="Find"/>
 </form>
 <ul id="users">
 </ul>
@@ -36,6 +36,6 @@
 <ul id="visits">
 </ul>
 </p>
-<p> Congratulate, {{name}}! CI/CD complete. ver 2.00</p>
+<p> Congratulate, __name__! CI/CD complete. ver 2.00</p>
 </body>
 </html>

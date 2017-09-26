@@ -14,7 +14,13 @@ public class ApiController {
     }
 
     @GetMapping("/visits")
-    public Iterable<Visit> getVisitdd(){
+    public Iterable<Visit> getVisits(){
         return visitsRepository.findAll();
+    }
+
+    @GetMapping("/user")
+    public GitHUBUser getUser(){
+        //TODO заменить заглушку
+        return new GitHUBUser(33, "GitBORIS");
     }
 }
