@@ -45,7 +45,7 @@ public class IndexController {
 
         appendResult(model, user);
 
-        //appendVisits(model, user);
+        appendVisits(model, user);
 
         return "index";
     }
@@ -112,11 +112,11 @@ public class IndexController {
         return createIndex(model);
     }
 
-    @GetMapping("/repo/{id}")
+    /*@GetMapping("/repo/{id}")
     public String repo_detail(Model model, @PathVariable("id") Long id){
 
         return createIndex(model);
-    }
+    }*/
 
     @PostMapping("/")
     public String findUser(Model model, @ModelAttribute UserFindForm userFindForm) {
