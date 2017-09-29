@@ -13,33 +13,38 @@
                 });
             });
     </script>
-    <script type="text/javascript">
-        fetch("/api/user")
-            .then(response => response.json())
-            .then(user => {
-                    document.querySelector('#user').innerText='Профиль пользователя ' + user.name;
-                    user.getRepo().forEach(rep => {
-                        const el = document.createElement('li');
-                        el.innerText = rep.description+" "+rep.star+" stars";
-                        document.querySelector('#repos').append(el)
-                    });
-                });
-    </script>
 </head>
 <body>
 <form action="#" th:action="@{/}" th:object="${user_find_form}" method="post">
     GitHUB username:
-    <input type="text" th:field="*{username}"/><input type="submit" value="Find"/>
+    <input type="text" th:field="*{findusername}"/><input type="submit" value="Find"/>
 </form>
-<h2 id="user">Профиль пользователя</h2>
-<p>Repositories
-<ul id="repos">
-</ul>
-</p>
-<p>visits list:
+<div th:if="${result_form}">
+    <h2 th:text = "${'GitHUB профиль пользователя '+result_form.username}"></h2>
+    <p></p>
+    <td>
+        <table>
+            <caption>Популярные репозитории</caption>
+            <tr>
+                <th>Repository</th>
+                <th>Branches</th>
+                <th>Stars</th>
+            </tr>
+            <tbody>
+            <tr th:each="row : ${result_form.repoList}">
+                <td><a th:href="${'/repo/'+row.id}" th:text = "${row.description}">text</a></td>
+                <td th:text="${row.count_branches}">branches</td>
+                <td th:text="${row.stars}">count stars</td>
+            </tr>
+            </tbody>
+        </table>
+    </td>
+</div>
+<footer>
 <ul id="visits">
 </ul>
 </p>
 <p> CI/CD complete. ver 2.00</p>
+</footer>
 </body>
 </html>

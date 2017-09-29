@@ -1,0 +1,40 @@
+QUERY
+query ($username: String!) {
+  repositoryOwner(login:$username){
+    userlogin: login
+    repositories(first:100){
+      repo_count: totalCount
+      repo_nodes: nodes{
+          repo_name: name
+          stargazers{
+                    stars: totalCount
+                  }
+        	refs(last: 5, refPrefix: "refs/heads/"){
+          	branch_count: totalCount,
+			branch_nodes: nodes{
+                branch_name: name
+                target{
+                  ... on Commit{
+                    history(first:10){
+                      commit_nodes:nodes{
+                        authoredByCommitter
+                        author{
+                          commit_date: date
+                          user{
+                            commit_author: login
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+            }
+        }
+      }
+    }
+  }
+}
+VAR
+{
+  "username":"axvad"
+}

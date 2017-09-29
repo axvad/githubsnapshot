@@ -65,3 +65,198 @@ fragment commit on GithubCommit {
     }
   }
 }
+////////////////////////////////////////////////////////////////
+query ($username: String!) {
+  user(login: $username) {
+    name
+    location
+    repositories(first: 10) {
+      totalCount
+      nodes {
+        name
+        stargazers {
+          totalStars: totalCount
+        }
+        pullRequests(first: 100) {
+          totalCount
+          nodes {
+            repository {
+              name
+            }
+            id
+            mergeCommit {
+              committedDate
+            }
+            timeline {
+              totalCount
+            }
+            commits(first: 100) {
+              countCommints: totalCount
+              nodes {
+                commit {
+                  committedDate
+                }
+              }
+            }
+            updatedAt
+          }
+        }
+      }
+    }
+  }
+}
+///////////
+{
+  "username":"axvad"
+}
+///////////////////////////////////////////////////////////////////
+        pullRequests(first:50){
+          totalCount
+          nodes{
+            headRefName
+            mergedAt
+            number
+            title
+          }
+        }
+   ------------------------------------------------
+///////////////////////////////////////////////////////////////////
+query($username:String!){
+  repositoryOwner(login: $username) {
+    repositories(first: 100) {
+      nodes {
+        name
+        stargazers{
+          stars: totalCount
+        }
+      }
+    }
+  }
+}
+----------------------
+{
+  "username":"graphql-java"
+}
+>>>>>>>>>>>>>>>>>>>>>>
+{
+  "data": {
+    "repositoryOwner": {
+      "repositories": {
+        "nodes": [
+          {
+            "name": "graphql-java",
+            "stargazers": {
+              "stars": 1510
+            }
+          },
+          {
+            "name": "todomvc-relay-java",
+            "stargazers": {
+              "stars": 47
+            }
+          },
+          {
+            "name": "graphql-java-type-generator",
+            "stargazers": {
+              "stars": 23
+            }
+          },
+          {
+            "name": "graphql-java-annotations",
+            "stargazers": {
+              "stars": 100
+            }
+          },
+          {
+            "name": "graphql-java-servlet",
+            "stargazers": {
+              "stars": 32
+            }
+          },
+          {
+            "name": "graphql-java-tools",
+            "stargazers": {
+              "stars": 64
+            }
+          },
+          {
+            "name": "graphql-spring-boot",
+            "stargazers": {
+              "stars": 91
+            }
+          },
+          {
+            "name": "awesome-graphql-java",
+            "stargazers": {
+              "stars": 50
+            }
+          },
+          {
+            "name": "java-dataloader",
+            "stargazers": {
+              "stars": 27
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+///////////////////////////////////////////////////////////////////// Type1
+query ($username: String!, $repo:String!) {
+  repository(owner: $username, name:$repo) {
+    name
+    refs(first:50, refPrefix:"refs/heads/"){
+      branch_count: totalCount
+      branches: nodes{
+        branch_name: name
+      }
+    }
+  }
+}
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    pullRequests(first:50){
+      pull_count: totalCount
+      nodes{
+        title
+        commits(first:50){
+          totalCount
+          nodes{
+            commit{
+              message
+              committedDate
+            }
+          }
+        }
+      }
+    }
+  }
+
+/////////////////////////////////////////////// work!
+query ($username: String!, $repo:String!) {
+  repository(owner: $username, name:$repo) {
+    name
+    refs(first:50, refPrefix:"refs/heads/"){
+      branch_count: totalCount
+     	branch: nodes{
+        name
+      }
+    }
+    ref(qualifiedName:"refs/heads/master") {
+	  	name
+    	target {
+        ... on Commit {
+          history(first:30) {
+            edges {
+              node {
+                oid
+                committedDate
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+///////////////////////////////////////////////

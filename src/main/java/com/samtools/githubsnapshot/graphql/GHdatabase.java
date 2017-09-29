@@ -1,7 +1,17 @@
 package com.samtools.githubsnapshot.graphql;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
+//import com.fasterxml.jackson.core.JsonFactory;
+//import com.fasterxml.jackson.core.JsonParser;
+//import com.fasterxml.jackson.databind.util.JSONPObject;
 //import com.sun.java.util.jar.pack.ConstantPool;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeCreator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -20,6 +30,11 @@ import sun.net.www.http.HttpClient;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
@@ -32,7 +47,7 @@ public class GHdatabase {
 
     }
 
-    public static void graphql(){
+    public static void graphql() {
         String schema = "type Query{hello: String}";
 
         SchemaParser schemaParser = new SchemaParser();
@@ -50,11 +65,11 @@ public class GHdatabase {
         //Context contextForUser = YourGraphqlContextBuilder.getContextForUser(getCurrentUser());
 
         ExecutionInput executionInput = ExecutionInput.newExecutionInput()
-        //        .context(contextForUser)
+                //        .context(contextForUser)
                 .build();
 
 
-        ExecutionInput input = new ExecutionInput("{hello}",null,null,null,null);
+        ExecutionInput input = new ExecutionInput("{hello}", null, null, null, null);
 
         ExecutionResult executionResult = build.execute("{hello}");
 
@@ -68,7 +83,10 @@ public class GHdatabase {
 
         String host = "https://api.github.com/graphql";//?access_token=d232c34bf533ce8950e7cb2bdac1c382800b07d2";
 
-        String query = "{ \"query\": \"{viewer { login }}\" }"; // WORK!!!
+        String q1 = "{ \"query\": \"{user { login }}\" }"; // WORK!!!
+        String q2 = "\"query\": \"query ($username: String!){repositoryOwner(login:$username) { repositories(first:10) { totalCount }}}\"";
+        String v1 = "\"variables\":\"{ \\\"username\\\":\\\"axvad\\\"}\"";
+        String query = "{ " + v1 + ", " + q2 + "}";
 
         byte data[] = null;
 
@@ -76,14 +94,14 @@ public class GHdatabase {
         BufferedReader reader = null;
         StringBuilder stringBuilder;
 
-        try{
+        try {
 
             URL url = new URL(host);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("User-Agent","Mozilla/5");
+            con.setRequestProperty("User-Agent", "Mozilla/5");
 
             con.setConnectTimeout(5000);
             con.setReadTimeout(5000);
@@ -92,14 +110,13 @@ public class GHdatabase {
             con.setDoOutput(true);
 
             con.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
-            con.setRequestProperty("Authorization","token d232c34bf533ce8950e7cb2bdac1c382800b07d2");
+            con.setRequestProperty("Authorization", "token 9d4884327632b76fa902aa2ff8ad549c0b40c94a");
             con.setRequestProperty("Accept", "application/json");
 
-            JSONPObject jsonObj = new JSONPObject("query",query);
+            /*JSONPObject jsonObj = new JSONPObject();
+            System.out.println(jsonObj.toString());
+            */
 
-            HttpClient client = HttpClient.New(url);
-
-            //ConstantPool.StringEntry =
             OutputStream strm = con.getOutputStream();
             data = query.toString().getBytes("UTF-8");
 
@@ -111,8 +128,8 @@ public class GHdatabase {
 
 
             con.connect();
-            int responseCode= con.getResponseCode();
-            System.out.println("Connect return code "+responseCode);
+            int responseCode = con.getResponseCode();
+            System.out.println("Connect return code " + responseCode);
 
             if (responseCode != 200) {
                 System.out.println("Connection error");
@@ -124,8 +141,7 @@ public class GHdatabase {
             stringBuilder = new StringBuilder();
 
             String line = null;
-            while ((line = reader.readLine()) != null)
-            {
+            while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line + "\n");
             }
 
@@ -134,18 +150,21 @@ public class GHdatabase {
 
         } catch (MalformedURLException | ProtocolException e) {
             e.printStackTrace();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                    if (is != null) is.close();
-                    if (reader != null) reader.close();
+                if (is != null) is.close();
+                if (reader != null) reader.close();
 
-            } catch (Exception ex) {ex.printStackTrace();}
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
 
     }
+
     /*
     public void callingGraph(){
         CloseableHttpClient client= null;
@@ -196,4 +215,10 @@ public class GHdatabase {
 
     }
     */
+    public static String loadGraphQLSchema(String filename) throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(filename);
+        return root.asText();
+    }
 }
