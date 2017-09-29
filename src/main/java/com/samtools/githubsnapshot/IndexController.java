@@ -4,8 +4,6 @@ import com.samtools.githubsnapshot.dbview.*;
 import com.samtools.githubsnapshot.form.ResultForm;
 import com.samtools.githubsnapshot.form.UserFindForm;
 import com.samtools.githubsnapshot.graphql.GQLClient;
-import com.sun.xml.internal.ws.server.provider.AsyncProviderInvokerTube;
-import org.hibernate.annotations.AttributeAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
