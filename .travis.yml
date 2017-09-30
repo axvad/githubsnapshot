@@ -10,4 +10,4 @@ script:
 
 after_success:
   - echo "Deploy "$TRAVIS_BRANCH
-  - test "$TRAVIS_BRANCH" = "development" && sh .travis/deploy_dockerhub.sh
+  - test ("$TRAVIS_BRANCH" = "development" || "$TRAVIS_BRANCH" = "master") && sh .travis/deploy_dockerhub.sh
