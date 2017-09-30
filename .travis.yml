@@ -9,5 +9,5 @@ script:
   - ./mvnw clean package
 
 after_success:
-  - echo "Deploy "+ $TRAVIS_BRANCH
+  - echo "Deploy "$TRAVIS_BRANCH
   - test "$TRAVIS_BRANCH" = "master" && sh .travis/deploy_dockerhub.sh
