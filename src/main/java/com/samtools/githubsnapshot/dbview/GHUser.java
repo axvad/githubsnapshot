@@ -61,7 +61,7 @@ public class GHUser {
      * @return
      */
     public List<GHRepo> getRepos() {
-        this.repos.sort( Comparator.comparing(it->-it.getStars()));
+        this.repos.sort(Comparator.comparing(it -> -it.getStars()));
         return this.repos;
     }
 
