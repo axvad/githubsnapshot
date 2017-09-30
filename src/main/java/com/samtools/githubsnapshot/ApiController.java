@@ -36,7 +36,7 @@ public class ApiController {
 
     @GetMapping("/user")
     public GHUser getLastUser(){
-        return usersListCR.findOne(usersListCR.count()); //if (usersListCR.count()==0)
+        return usersListCR.findOne(usersListCR.count());
     }
 
 
@@ -99,10 +99,6 @@ public class ApiController {
             usersListCR.save(ghUser);
 
             System.out.println(ghUser.getShortText());
-
-            //Pretty print
-            //String prettyUser = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(ghUser);
-            //System.out.println(prettyUser);
 
             return "index";
 

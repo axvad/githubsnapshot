@@ -13,9 +13,10 @@ import java.util.*;
 
 /**
  * Class for get data from GraphQL server.
- * @Root - url server with "/graphql" endpoint (usually)
- * @Token - need to Authorization in head HTTP request
- * @FileQuery - file with query structure, copypast form GraphQL Api. For example https://developer.github.com/v4/explorer/
+ * Connect:
+ * Root - url server with "/graphql" endpoint (usually)
+ * Token - need to Authorization in head HTTP request
+ * FileQuery - file with query structure, copypast form GraphQL Api. For example https://developer.github.com/v4/explorer/
  */
 
 @Service
@@ -32,24 +33,42 @@ public class GQLClient {
     @Value("${graphql.key}")
     private String token;
 
+    /**
+     * Set url to server GraqhQL
+     * @param root for exampplle- "http://somehost.com/graphql"
+     */
+    public void setRoot(String root) {
+        this.root = root;
+    }
+
+    /**
+     * URL server GraphQL request
+     * @return string url
+     */
     public String getRoot() {
         return root;
     }
 
-    public void setRoot(String root) {
-        this.root = root;
+    /**
+     * Set file to query graphql, tested on https://developer.github.com/v4/explorer/.
+     * Format:
+     *      QUERY
+     *      insert here copied text from query frame...
+     *      VAR
+     *      insert here copied text from variable frame ...
+     *
+     * @param fileQuery full path filename
+     */
+    public void setFileQuery(String fileQuery) {
+        this.fileQuery = new File(fileQuery);
     }
 
     public File getFileQuery() {
         return fileQuery;
     }
 
-    public void setFileQuery(String fileQuery) {
-        this.fileQuery = new File(fileQuery);
-    }
-
     public void setQuery(String query){
-        this.query = query; // normalizeStringForQuery(query);
+        this.query = query;
     }
 
     public String getToken() {
@@ -68,8 +87,13 @@ public class GQLClient {
     }
 
     public String getUserData(String username){
-        //todo delete sout
         System.out.printf("Searching data for user %s\n",username);
+
+        if (this.root == null || this.token == null || (this.query==null && this.fileQuery==null))
+        {
+            System.out.println("GQL client not configured: root, key, query needed");
+            return "error: can't create to GQL connection";
+        }
 
         String query;
 
@@ -95,6 +119,9 @@ public class GQLClient {
         String result = null;
 
         HttpURLConnection conn = createConnection(root, gqlQuery, token);
+
+        if (conn == null)
+            return "error: can't create connection";
 
         long res_code = sendQuery(conn, gqlQuery);
         if (res_code==200) {
@@ -142,11 +169,11 @@ public class GQLClient {
 
     private long sendQuery(HttpURLConnection conn, String body){
 
-        byte data[] = null;
+        byte data[];
 
         try(OutputStream strm = conn.getOutputStream()) {
 
-            data = body.toString().getBytes("UTF-8");
+            data = body.getBytes("UTF-8");
 
             strm.write(data);
             strm.flush();
@@ -173,7 +200,7 @@ public class GQLClient {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))){
 
             while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line + "\n");
+                stringBuilder.append(line).append("\n");
             }
 
             reader.close();
@@ -290,20 +317,9 @@ public class GQLClient {
     }
 
 
-    /**
-     * develop test
-     * @param args
-     */
+
+    // develop test
     public static void main(String[] args) {
-        GQLClient client = new GQLClient();
 
-        //client.setRoot(this.getRoot());
-        //client.setToken("");
-        //client.setFileQuery("/home/sam/Programming/Git/githubsnapshot/src/main/java/com/samtools/githubsnapshot/graphql/gitsnap.gql");
-
-        //String user = client.getUserData("axvad");
-
-
-        System.out.println();
     }
 }
