@@ -1,42 +1,72 @@
 package com.samtools.githubsnapshot.dbview;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.*;
 
+/**
+ * Database class: Users, join to table Repositories (GHRepo) OneToMany by repos field
+ */
 @Entity
+@Table(name="USER")
 public class GHUser {
 
     @Id
     @GeneratedValue
+    @Column(name="user_ID")
     public Long id;
 
-    @Column(name="USERNAME")
     public String name;
 
-    @OneToMany
-    @Column(name = "REPOS")
-    Set<GHRepo> repos;
+    public String login;
 
-    /*final GHReposListCR repositories;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    public List<GHRepo> repos;
 
-    public Iterable<GHRepo> getRepos(){
-        return repositories.findAll();
+    public Long getId() {
+        return id;
     }
 
-    public GHUser(GHReposListCR repositories){
-        this.repositories = repositories;
+    public String getLogin() {
+        return login;
     }
 
-    //todo test. delete for release
-    public void fillRepos(){
-        for (int i=0; i < 3; i++){
-            GHRepo rp = new GHRepo();
-            rp.count_branches = (int) (Math.random()*10);
-            rp.star = (int) (Math.random()*50);
-            rp.user_id = this.id;
-            rp.description = "Repository "+i;
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
-            repositories.save(rp);
-        }
-    }*/
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName(){
+        if (this.name != null)
+            return new StringBuilder(this.login).append(" (").append(this.name).append(")").toString();
+        else
+            return this.login;
+    }
+
+    public String getShortText(){
+        StringBuilder result = new StringBuilder();
+
+        result = result.append(this.getLogin());
+
+        result = (this.name != null) ? result.append(" (").append(this.name).append(")") : result;
+        result = (repos != null) ? result.append(", repositories: ").append(repos.size()) : result;
+
+        return result.toString();
+    }
+
+    /**
+     * Sorted by repository stars from top to down
+     * @return
+     */
+    public List<GHRepo> getRepos() {
+        this.repos.sort( Comparator.comparing(it->-it.getStars()));
+        return this.repos;
+    }
+
+    public void setRepos(List<GHRepo> repos) {
+        this.repos = repos;
+    }
+
 }

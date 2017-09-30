@@ -1,0 +1,31 @@
+query ($username: String!) {
+  user(login: $username) {
+    name
+    location
+    repositories(first: 50) {
+      totalCount
+      nodes {
+        name
+        stargazers {
+          totalStars: totalCount
+        }
+        languages(first:50) {
+          nodes{
+            name
+          }
+        }
+        object{
+          abbreviatedOid
+        }
+      }
+    }
+    pullRequests(first: 50) {
+      totalCount
+      nodes {
+        id
+        bodyText
+        createdAt
+      }
+    }
+  }
+}

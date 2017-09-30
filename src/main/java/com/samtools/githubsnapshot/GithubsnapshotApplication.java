@@ -9,4 +9,6 @@ public class GithubsnapshotApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GithubsnapshotApplication.class, args);
 	}
+
+
 }
