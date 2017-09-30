@@ -3,6 +3,9 @@ package com.samtools.githubsnapshot.dbview;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Database class: Commits, join to table Repositories ("class GHRepo)
+ */
 @Entity
 @Table(name="COMMITS")
 public class GHCommit {

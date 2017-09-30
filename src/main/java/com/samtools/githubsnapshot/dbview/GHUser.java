@@ -3,6 +3,9 @@ package com.samtools.githubsnapshot.dbview;
 import javax.persistence.*;
 import java.util.*;
 
+/**
+ * Database class: Users, join to table Repositories (GHRepo) OneToMany by repos field
+ */
 @Entity
 @Table(name="USER")
 public class GHUser {

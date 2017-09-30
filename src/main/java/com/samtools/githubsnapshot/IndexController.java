@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.jws.WebParam;
@@ -22,6 +21,9 @@ public class IndexController {
 
     @Autowired
     ApiController api;
+
+    @Autowired
+    GQLClient service;
 
     @Value("${graphql.server}")
     private String rootGQL;
@@ -91,17 +93,13 @@ public class IndexController {
      */
     private void appendVisits(Model model, GHUser user){
         Visit visit = new Visit();
-        if (user != null){
-            visit.description = String.format("last search at %s for user %s", LocalDateTime.now(),user.getShortText());
-        }
-        else{
-            visit.description = String.format("visited at %s", LocalDateTime.now());
-        }
+
+        visit.description = String.format("last request at %s", LocalDateTime.now());
+
+        if (visitsListCR.count()>0)
+            visitsListCR.deleteAll();
 
         visitsListCR.save(visit);
-
-        if (visitsListCR.count()>visitsLogSize)
-            visitsListCR.deleteAll();
 
         return;
     }
@@ -112,11 +110,11 @@ public class IndexController {
         return createIndex(model);
     }
 
-    /*@GetMapping("/repo/{id}")
+    @GetMapping("/repo/{id}")
     public String repo_detail(Model model, @PathVariable("id") Long id){
 
         return createIndex(model);
-    }*/
+    }
 
     @PostMapping("/")
     public String findUser(Model model, @ModelAttribute UserFindForm userFindForm) {
@@ -125,14 +123,7 @@ public class IndexController {
 
         System.out.printf("Your select: %s\n", finduser);
 
-        //todo create service
-        GQLClient client = new GQLClient();
-        client.setRoot(this.rootGQL);
-        client.setToken(this.keyGQL);
-        //client.setFileQuery("/home/sam/Programming/Git/githubsnapshot/src/main/java/com/samtools/githubsnapshot/graphql/gitsnap.gql");
-        client.setQuery(this.queryGQL);
-
-        String result = client.getUserData(finduser);
+        String result = service.getUserData(finduser);
 
         api.parseUserDataFromJson(result);
 

@@ -1,9 +1,13 @@
 package com.samtools.githubsnapshot.dbview;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Database class: Repositories, join to tables:
+ *  GHUser as ManyToOne by user
+ *  GHCommit as OneToMany
+ */
 @Entity
 @Table(name="REPOSITS")
 public class GHRepo {
