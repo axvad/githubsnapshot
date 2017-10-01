@@ -10,20 +10,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.client.RestTemplate;
 
-import javax.jws.WebParam;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 @Controller
 public class IndexController {
-    //testing inner field
-    private String gh_name;
 
     @Autowired
     ApiController api;
 
     @Autowired
     GQLClient service;
+
+    @Value("#{servletContext.contextPath}")
+    private String servletContextPath;
+
 
     @Value("${graphql.server}")
     private String rootGQL;
@@ -117,17 +120,42 @@ public class IndexController {
     }
 
     @PostMapping("/")
-    public String findUser(Model model, @ModelAttribute UserFindForm userFindForm) {
+    public String findUser(Model model, @ModelAttribute UserFindForm userFindForm, HttpServletRequest request) {
 
         String finduser = userFindForm.getFindusername();
 
         System.out.printf("Your select: %s\n", finduser);
 
-        String result = service.getUserData(finduser);
+        String cmd_find = request.getRequestURL().append("finduser/").append(finduser).toString();
 
-        api.parseUserDataFromJson(result);
+        String cmd_add = request.getRequestURL().append("api/adduser").toString();
+
+        System.out.println("Find command: "+cmd_find);
+        System.out.println("Add command: "+cmd_add);
+
+
+        String result = new RestTemplate()
+                .getForObject(cmd_find,String.class);
+
+        Boolean success = new RestTemplate()
+                .postForObject(cmd_add,result, Boolean.class);
+
 
         return createIndex(model);
+    }
+
+    /**
+     * Call Internal micriservices
+     * @param type GET or POST
+     * @param uri mapped adress "/index" for example
+     * @param param for furure
+     * @param json request body for POST
+     */
+    public static Object call_mkS(String type, String uri, String param, String json){
+        RestTemplate rest = new RestTemplate();
+        rest.getForEntity(uri,String.class,json);
+
+        return null;
     }
 
     final VisitsListCR visitsListCR;
