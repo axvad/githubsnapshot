@@ -2,6 +2,7 @@ package com.samtools.githubsnapshot.graphql;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.io.*;
@@ -19,8 +20,25 @@ import java.util.*;
  * FileQuery - file with query structure, copypast form GraphQL Api. For example https://developer.github.com/v4/explorer/
  */
 
-@Service
+@RestController
 public class GQLClient {
+
+    @GetMapping("/finduser/{userlogin}")
+    public String findUser(@PathVariable("userlogin") String userlogin){
+        String result = this.getUserData(userlogin);
+
+        return result;
+    }
+
+    @PostMapping("/finduser/{userlogin}")
+    public String findUserAndExecute(@PathVariable("userlogin") String userlogin){
+
+        String result = this.getUserData(userlogin);
+
+        //todo some action from params
+
+        return result;
+    }
 
     @Value("${graphql.server}")
     private String root;
@@ -67,10 +85,19 @@ public class GQLClient {
         return fileQuery;
     }
 
+    /**
+     * Set query from String, !!! need check for '\\\"'
+     * @param query as json string
+     */
     public void setQuery(String query){
+        //todo check json body for '"' and replace '\\\"'
         this.query = query;
     }
 
+    /**
+     * Decrypt token from saved string to token
+     * @return service token
+     */
     public String getToken() {
         StringBuilder in = new StringBuilder();
 
@@ -82,10 +109,19 @@ public class GQLClient {
         return in.toString();
     }
 
+    /**
+     * Set <b>manually cryptid</b> token. Manually cryptid are needed for save token in application parameters
+     * @param token
+     */
     public void setToken(String token) {
         this.token = token;
     }
 
+    /**
+     * Search and get data from GraphQL server
+     * @param username login for search
+     * @return
+     */
     public String getUserData(String username){
         System.out.printf("Searching data for user %s\n",username);
 
@@ -313,10 +349,9 @@ public class GQLClient {
      */
     private static String normalizeStringForQuery(String in){
         //todo check \" is present?
+        //replaceAll("[\\-| |\\.]+", "-");
         return in.trim().replace("\"","\\\"");
     }
-
-
 
     // develop test
     public static void main(String[] args) {

@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samtools.githubsnapshot.dbview.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.catalina.Server;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -36,12 +35,22 @@ public class ApiController {
 
     @GetMapping("/user")
     public GHUser getLastUser(){
-        return usersListCR.findOne(usersListCR.count());
+
+        return null;
     }
 
+    @PostMapping("/adduser")
+    public Boolean addUser(@RequestBody String jsonUser){
+        //@PathVariable("login") String login,
+        //todo replace infinity adding to update algoritm, check variant "login as key"
+        //usersListCR.delete(usersListCR.findOne(usersListCR.count()));
 
+        parseUserDataFromJson(jsonUser);
 
-    public String parseUserDataFromJson(String jsonString){
+        return false;
+    }
+
+    private String parseUserDataFromJson(String jsonString){
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
