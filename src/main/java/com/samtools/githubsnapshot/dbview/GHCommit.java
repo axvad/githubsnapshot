@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
  * Database class: Commits, join to table Repositories ("class GHRepo)
  */
 @Entity
-@Table(name="COMMITS")
+@Table(name = "COMMITS")
 public class GHCommit {
+
     @Id
     @GeneratedValue
-    @Column(name="commit_ID")
+    @Column(name = "commit_ID")
     private Long id;
 
     private String author;
@@ -19,8 +20,11 @@ public class GHCommit {
     private LocalDateTime datetime;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name="repo_ID")
+    @JoinColumn(name = "repo_ID")
     private GHRepo repo;
+
+    public GHCommit() {
+    }
 
     public GHCommit(GHRepo repo) {
         this.repo = repo;

@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>GitHUB user profile snapshot</title>
     <script type="text/javascript">
@@ -14,36 +15,55 @@
             });
     </script>
 </head>
-<body>
-<form action="#" th:action="@{/}" th:object="${user_find_form}" method="post">
+
+<body style="width:100%; height:100%; margin:0">
+
+<form action="#" th:action="@{/}" th:object="${indexForm}" method="post">
     GitHUB username:
-    <input type="text" th:field="*{findusername}"/><input type="submit" value="Find"/>
+    <input type="text" th:field="*{searchedUsername}"/><input type="submit" value="Find"/>
 </form>
-<div th:if="${result_form}">
-    <h2 th:text = "${'GitHUB профиль пользователя '+result_form.username}"></h2>
-    <p></p>
-    <td>
+
+<div style="float:left; width:100%; height:100%" th:fragment="${indexForm} :: contect" th:if="${indexForm.username}">
+    <h2 th:text = "${'GitHUB профиль пользователя '+indexForm.username}"></h2>
+    <div style="float:left; width:30%; height:400px; overflow:auto">
         <table>
-            <caption>Популярные репозитории</caption>
             <tr>
                 <th>Repository</th>
                 <th>Branches</th>
                 <th>Stars</th>
             </tr>
+                <tbody>
+                <tr th:each="row : ${indexForm.repoList}">
+                    <td><a th:href="${'/repo/'+row.id}" th:text = "${row.description}" method="get">text</a></td>
+                    <td th:text="${row.count_branches}">branches</td>
+                    <td th:text="${row.stars}">count stars</td>
+                </tr>
+                </tbody>
+        </table>
+    </div>
+    <div th:if="${indexForm.selectedRepo}" style="float:right; width:70%; height:400px">
+        <h2 th:text="${'Repository: '+indexForm.selectedRepo}">REPO</h2>
+        <h3 th:text="${indexForm.username+' commit median hour - ' + indexForm.median_hour}">Median Time</h3>
+        <table>
+            <caption> Time commits</caption>
+            <td>Hour</td>
+            <tc th:each="col, num : ${indexForm.timestamp}">
+                <td th:text="${num.index}">number</td>
+            </tc>
             <tbody>
-            <tr th:each="row : ${result_form.repoList}">
-                <td><a th:href="${'/repo/'+row.id}" th:text = "${row.description}">text</a></td>
-                <td th:text="${row.count_branches}">branches</td>
-                <td th:text="${row.stars}">count stars</td>
-            </tr>
+                <td>Count commits</td>
+                <tc th:each="col, num : ${indexForm.timestamp}">
+                    <td th:text="${col}">HOUR</td>
+                </tc>
             </tbody>
         </table>
-    </td>
+    </div>
 </div>
-<footer>
-<ul id="visits">
-</ul>
-<p> CD/CI complete. ver 3.00.3</p>
-</footer>
+<div th:fragment="fragments/footer :: footer">
+    <ul id="visits">
+    </ul>
+    <p> CD/CI complete. ver 3.00.4</p>
+</div>
+
 </body>
 </html>
