@@ -1,7 +1,6 @@
 package com.samtools.githubsnapshot.graphql;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,26 +22,13 @@ import java.util.*;
 @RestController
 public class GQLClient {
 
-    @GetMapping("/finduser/{userlogin}")
-    public String findUser(@PathVariable("userlogin") String userlogin){
-        String result = this.getUserData(userlogin);
+    @Value("${graphql.server.root}")
+    private String server_root;
 
-        return result;
-    }
+    @Value("${graphql.server.timeout}")
+    private int server_timeout;
 
-    @PostMapping("/finduser/{userlogin}")
-    public String findUserAndExecute(@PathVariable("userlogin") String userlogin){
-
-        String result = this.getUserData(userlogin);
-
-        //todo some action from params
-
-        return result;
-    }
-
-    @Value("${graphql.server}")
-    private String root;
-
+    //@Value("${graphql.queryFile}")
     private File fileQuery;
 
     @Value("${graphql.query}")
@@ -51,29 +37,48 @@ public class GQLClient {
     @Value("${graphql.key}")
     private String token;
 
+    @GetMapping("/finduser/{userlogin}")
+    public String findUser(@PathVariable("userlogin") String userlogin) {
+        String result = this.getUserData(userlogin);
+
+        return result;
+    }
+
+    @PostMapping("/finduser/{userlogin}")
+    public String findUserAndExecute(@PathVariable("userlogin") String userlogin) {
+
+        String result = this.getUserData(userlogin);
+
+        //todo some action from future dev: returned params
+
+        return result;
+    }
+
     /**
      * Set url to server GraqhQL
+     *
      * @param root for exampplle- "http://somehost.com/graphql"
      */
-    public void setRoot(String root) {
-        this.root = root;
+    public void setServer_root(String root) {
+        this.server_root = root;
     }
 
     /**
      * URL server GraphQL request
+     *
      * @return string url
      */
-    public String getRoot() {
-        return root;
+    public String getServer_root() {
+        return server_root;
     }
 
     /**
      * Set file to query graphql, tested on https://developer.github.com/v4/explorer/.
      * Format:
-     *      QUERY
-     *      insert here copied text from query frame...
-     *      VAR
-     *      insert here copied text from variable frame ...
+     * QUERY
+     * insert here copied text from query frame...
+     * VAR
+     * insert here copied text from variable frame ...
      *
      * @param fileQuery full path filename
      */
@@ -87,47 +92,52 @@ public class GQLClient {
 
     /**
      * Set query from String, !!! need check for '\\\"'
+     *
      * @param query as json string
      */
-    public void setQuery(String query){
+    public void setQuery(String query) {
         //todo check json body for '"' and replace '\\\"'
         this.query = query;
     }
 
     /**
      * Decrypt token from saved string to token
+     *
      * @return service token
      */
     public String getToken() {
         StringBuilder in = new StringBuilder();
 
-        for (int i=0; i < this.token.length();i+=2){
-            String p = this.token.substring(i,i+2);
+        for (int i = 0; i < this.token.length(); i += 2) {
+            String p = this.token.substring(i, i + 2);
 
-            in.append((char)Long.parseLong(p,16));
+            in.append((char) Long.parseLong(p, 16));
         }
         return in.toString();
     }
 
+
     /**
      * Set <b>manually cryptid</b> token. Manually cryptid are needed for save token in application parameters
+     *
      * @param token
      */
     public void setToken(String token) {
         this.token = token;
     }
 
+
     /**
      * Search and get data from GraphQL server
+     *
      * @param username login for search
      * @return
      */
-    public String getUserData(String username){
-        System.out.printf("Searching data for user %s\n",username);
+    public String getUserData(String username) {
+        System.out.printf("Searching data for user %s\n", username);
 
-        if (this.root == null || this.token == null || (this.query==null && this.fileQuery==null))
-        {
-            System.out.println("GQL client not configured: root, key, query needed");
+        if (username==null || this.server_root == null || this.token == null || (this.query == null && this.fileQuery == null)) {
+            System.out.println("GQL client not configured: root, key, query, user needed");
             return "error: can't create to GQL connection";
         }
 
@@ -145,10 +155,11 @@ public class GQLClient {
 
         query = query.replace("axvad", username);
 
-        return executeQuery(this.getRoot(),this.getToken(),query);
+        return executeQuery(this.getServer_root(), this.getToken(), query);
     }
 
-    private String executeQuery(String root, String token, String gqlQuery){
+
+    private String executeQuery(String root, String token, String gqlQuery) {
 
         System.out.printf("Query: %s\n", gqlQuery);
 
@@ -160,13 +171,11 @@ public class GQLClient {
             return "error: can't create connection";
 
         long res_code = sendQuery(conn, gqlQuery);
-        if (res_code==200) {
+        if (res_code == 200) {
             result = getResult(conn);
             System.out.printf("Result: %s\n", result);
-        }
-        else
-        {
-            System.out.println("Error server response: "+res_code);
+        } else {
+            System.out.println("Error server response: " + res_code);
         }
 
         conn.disconnect();
@@ -174,7 +183,8 @@ public class GQLClient {
         return result;
     }
 
-    private HttpURLConnection createConnection(String rootURL, String body, String token){
+
+    private HttpURLConnection createConnection(String rootURL, String body, String token) {
 
         try {
 
@@ -184,8 +194,8 @@ public class GQLClient {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("User-Agent", "Mozilla/5");
 
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(60000);
+            connection.setConnectTimeout((int) (this.server_timeout * 0.2));
+            connection.setReadTimeout(this.server_timeout);
 
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -196,18 +206,18 @@ public class GQLClient {
 
             return connection;
 
-        } catch(IOException ex)
-        {
+        } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
     }
 
-    private long sendQuery(HttpURLConnection conn, String body){
+
+    private long sendQuery(HttpURLConnection conn, String body) {
 
         byte data[];
 
-        try(OutputStream strm = conn.getOutputStream()) {
+        try (OutputStream strm = conn.getOutputStream()) {
 
             data = body.getBytes("UTF-8");
 
@@ -219,21 +229,22 @@ public class GQLClient {
 
             return (conn.getResponseCode());
 
-        } catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
         return -1;
     }
 
-    private String getResult(HttpURLConnection conn){
+
+    private String getResult(HttpURLConnection conn) {
 
 
         StringBuilder stringBuilder = new StringBuilder();
         String line = null;
 
         // read the output from the server
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))){
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
 
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line).append("\n");
@@ -243,20 +254,22 @@ public class GQLClient {
 
             return stringBuilder.toString();
 
-        } catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
         return null;
     }
 
+
     /**
      * Convert file with text copypast from GitHUB GraphQL Api Explorer.
      * For devide query from variables use keywords (Uppercase, New line, no data at line) QUERY, VAR
+     *
      * @param filename - File for convert
      * @return JSON string ready for http post.
      */
-    private static String gql2json(File filename){
+    private static String gql2json(File filename) {
 
         try {
 
@@ -274,7 +287,7 @@ public class GQLClient {
             line_need_comma.add(false);
 
             //parsing file line by line
-            for (String line : lines){
+            for (String line : lines) {
 
                 if (line.startsWith("QUERY")) {
 
@@ -296,7 +309,7 @@ public class GQLClient {
 
                     part_title = root_key;
                     root_key = "";
-                    part_body.delete(0,part_body.length());
+                    part_body.delete(0, part_body.length());
 
                     continue;
                 }
@@ -329,29 +342,32 @@ public class GQLClient {
             //create returned string
             StringBuilder result = new StringBuilder("{");
 
-            parts.forEach((key,value)->result.append("\"").append(key).append("\":\"").append(value).append("\","));
+            parts.forEach((key, value) -> result.append("\"").append(key).append("\":\"").append(value).append("\","));
 
-            result.deleteCharAt(result.length()-1).append("}");
+            result.deleteCharAt(result.length() - 1).append("}");
 
             return result.toString();
 
-        } catch(IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
         return null;
     }
 
+
     /**
      * clear spase and create inner \" instead of "
+     *
      * @param in input string
      * @return cleared string
      */
-    private static String normalizeStringForQuery(String in){
+    private static String normalizeStringForQuery(String in) {
         //todo check \" is present?
         //replaceAll("[\\-| |\\.]+", "-");
-        return in.trim().replace("\"","\\\"");
+        return in.trim().replace("\"", "\\\"");
     }
+
 
     // develop test
     public static void main(String[] args) {
