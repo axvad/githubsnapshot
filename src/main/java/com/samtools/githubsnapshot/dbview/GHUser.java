@@ -7,45 +7,51 @@ import java.util.*;
  * Database class: Users, join to table Repositories (GHRepo) OneToMany by repos field
  */
 @Entity
-@Table(name="USER")
+@Table(name = "USER")
 public class GHUser {
 
     @Id
     @GeneratedValue
-    @Column(name="user_ID")
-    public Long id;
+    @Column(name = "user_ID")
+    private Long id;
 
-    public String name;
+    private String name;
 
-    public String login;
+    private String login;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    public List<GHRepo> repos;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<GHRepo> repos;
 
     public Long getId() {
+
         return id;
     }
 
     public String getLogin() {
+
         return login;
     }
 
     public void setLogin(String login) {
+
         this.login = login;
     }
 
     public void setName(String name) {
+
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
+
         if (this.name != null)
-            return new StringBuilder(this.login).append(" (").append(this.name).append(")").toString();
+            return new StringBuffer(this.login).append(" (").append(this.name).append(")").toString();
         else
             return this.login;
     }
 
-    public String getShortText(){
+    public String getShortText() {
+
         StringBuilder result = new StringBuilder();
 
         result = result.append(this.getLogin());
@@ -58,14 +64,17 @@ public class GHUser {
 
     /**
      * Sorted by repository stars from top to down
-     * @return
+     *
+     * @return sorted list
      */
     public List<GHRepo> getRepos() {
+
         this.repos.sort(Comparator.comparing(it -> -it.getStars()));
         return this.repos;
     }
 
     public void setRepos(List<GHRepo> repos) {
+
         this.repos = repos;
     }
 

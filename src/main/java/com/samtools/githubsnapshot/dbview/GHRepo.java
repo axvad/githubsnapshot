@@ -1,33 +1,36 @@
 package com.samtools.githubsnapshot.dbview;
 
+import org.hibernate.annotations.FetchProfile;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 import java.util.List;
 
 /**
  * Database class: Repositories, join to tables:
- *  GHUser as ManyToOne by user
- *  GHCommit as OneToMany
+ * GHUser as ManyToOne by user
+ * GHCommit as OneToMany
  */
 @Entity
-@Table(name="REPOSITS")
+@Table(name = "REPOSITS")
 public class GHRepo {
 
     @Id
     @GeneratedValue
-    @Column(name="repo_ID")
+    @Column(name = "repo_ID")
     private long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name="user_ID")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_ID")
     private GHUser user;
 
-    public String description;
+    private String description;
 
-    public Integer stars;
+    private Integer stars;
 
-    public Integer count_branches;
+    private Integer count_branches;
 
-    @OneToMany(mappedBy = "repo",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "repo", cascade = CascadeType.ALL)
     private List<GHCommit> timesOfCommit;
 
     public long getId() {
@@ -66,6 +69,7 @@ public class GHRepo {
         this.count_branches = count_branches;
     }
 
+    @Transactional
     public List<GHCommit> getTimesOfCommit() {
         return timesOfCommit;
     }
