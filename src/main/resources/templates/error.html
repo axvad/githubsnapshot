@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css"/>
+  <link rel="stylesheet" href="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-beta.1.css" type="text/css"/>
+</head>
+
+<body>
+<div class="py-5 text-white bg-primary text-center">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Don't worry. It's just the error.</h1>
+        <p class="lead mb-4" th:text="${error_text}">Short info about error</p>
+        <form action="#" th:action="@{/}" method="get">
+          <button type="submit" class="btn btn-secondary">Try again</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bg-dark text-white py-0">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 mt-3 text-center">
+        <p>© Created by Axvad &nbsp;at 2017 </p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>
