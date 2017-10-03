@@ -208,6 +208,7 @@ public class GQLClient {
 
         } catch (IOException ex) {
             ex.printStackTrace();
+            //throw SpringException
             return null;
         }
     }
@@ -256,6 +257,7 @@ public class GQLClient {
 
         } catch (IOException ex) {
             ex.printStackTrace();
+
         }
 
         return null;
