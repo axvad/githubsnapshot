@@ -52,6 +52,11 @@ public class IndexController {
         visitsListCR.save(visit);
     }
 
+    @ModelAttribute("indexForm")
+    public IndexForm newIndexForm() {
+        return new IndexForm();
+    }
+
     @GetMapping("/")
     public ModelAndView index(ModelMap model) {
 
