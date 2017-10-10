@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css"/>
   <link rel="stylesheet" href="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-beta.1.css" type="text/css"/>
+  <script type="text/javascript">
+        fetch("/api/visits")
+            .then(response => response.json())
+            .then(visits => {
+                    document.querySelector('#visitors').innerText = visits.length + ' visits';
+                });
+    </script>
 </head>
 
 <body>
@@ -95,6 +102,7 @@
     <div class="row">
       <div class="col-md-12 mt-3 text-center">
         <p>© Created by Axvad &nbsp;at 2017 </p>
+        <p id="visitors">00 visits</p>
       </div>
     </div>
   </div>
