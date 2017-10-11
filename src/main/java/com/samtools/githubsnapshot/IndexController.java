@@ -44,12 +44,17 @@ public class IndexController {
 
         Visit visit = new Visit();
 
-        visit.description = String.format("last request at %s", LocalDateTime.now());
+        visit.description = String.format("event at %s", LocalDateTime.now());
 
         if (visitsListCR.count() > visitsLogSize - 1)
             visitsListCR.deleteAll();
 
         visitsListCR.save(visit);
+    }
+
+    @ModelAttribute("indexForm")
+    public IndexForm newIndexForm() {
+        return new IndexForm();
     }
 
     @GetMapping("/")
