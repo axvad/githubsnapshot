@@ -1,0 +1,23 @@
+QUERY
+query ($username: String!) {
+  repositoryOwner(login: $username) {
+    userlogin: login
+    repositories(first: 100) {
+      repo_count: totalCount
+      repo_nodes: nodes {
+        repo_url: url
+        repo_name: name
+        stargazers {
+          stars: totalCount
+        }
+        refs(first: 100, refPrefix: "refs/heads/") {
+          branch_count: totalCount
+        }
+      }
+    }
+  }
+}
+VAR
+{
+  "username":"axvad"
+}
