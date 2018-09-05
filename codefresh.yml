@@ -1,0 +1,15 @@
+version: '1.0'
+steps:
+  build-package:
+    working_directory: ${{clone_step_name}}
+    image: delfer/java-builder
+    commands:
+      - mvn package
+  
+  build-image:
+    type: build
+    working_directory: ${{clone_step_name}}
+    dockerfile: ./Dockerfile
+    image_name: axvad/codefresh-test-gitsnap
+    tag: develop
+    
